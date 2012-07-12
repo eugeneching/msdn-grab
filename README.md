@@ -16,8 +16,8 @@ ___
 
 ####Open MSDN page in browser:
   1. Highlight a given term that you want to query documentation for (e.g. you may highlight "fopen", "HeapAlloc").
-  2. Hit Ctrl-Shift-F3
-  3. Select the language (Win32 API, C/C++)
+  2. Hit Ctrl-Shift-F3.
+  3. Select the language (Win32 API, C/C++).
 
 ### Notes about comments
 
