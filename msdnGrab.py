@@ -182,6 +182,7 @@ def grabDefinitionFromMsdn(searchType):
   # Find the first definition
   code = soup.findAll('pre')[0]
   code = stripBlankLines(stripTags(code))
+  code = code.replace('\r', '')
 
   # Find the description
   if ('Dev Center' in str(soup.findAll('form'))):
