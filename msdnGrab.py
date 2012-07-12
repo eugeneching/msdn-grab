@@ -155,15 +155,34 @@ def grabDefinitionFromMsdn(searchType):
 
   # Handle IDA's naming conventions for the identifier
   searchTerm = searchTerm.replace('__imp_', '')
-  if (searchTerm.startswith('_')):
-    searchTerm = searchTerm[1:]
+  print '(msdnGrab) Using search term: %s' % searchTerm
+  #if (searchTerm.startswith('_')):
+    #searchTerm = searchTerm[1:]
 
   # Get the MSDN page URL
   msdnUrl = grabMsdnPageFromGoogle(searchTerm, searchType)
 
+  while (msdnUrl is None):
+    # Try again, in case underscores are causing trouble
+    if (searchTerm.startswith('_')):
+      searchTerm = searchTerm[1:]
+      print '(msdnGrab) Using search term: %s' % searchTerm
+      msdnUrl = grabMsdnPageFromGoogle(searchTerm, searchType)
+    else:
+      print '(msdnGrab) Error: Could not find a suitable MSDN page.'
+      return None
+
+
   if (msdnUrl is None):
-    print '(msdnGrab) Error: Could not find a suitable MSDN page.'
-    return None
+    # Try again, in case underscores are causing trouble
+    if (searchTerm.startswith('_')):
+      searchTerm = searchTerm[1:]
+      msdnUrl = grabMsdnPageFromGoogle(searchTerm, searchType)
+
+    if (msdnUrl is None):
+      print '(msdnGrab) Error: Could not find a suitable MSDN page.'
+      return None
+
 
   # Read the page
   opener = urllib2.build_opener()
