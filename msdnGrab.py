@@ -172,18 +172,6 @@ def grabDefinitionFromMsdn(searchType):
       print '(msdnGrab) Error: Could not find a suitable MSDN page.'
       return None
 
-
-  if (msdnUrl is None):
-    # Try again, in case underscores are causing trouble
-    if (searchTerm.startswith('_')):
-      searchTerm = searchTerm[1:]
-      msdnUrl = grabMsdnPageFromGoogle(searchTerm, searchType)
-
-    if (msdnUrl is None):
-      print '(msdnGrab) Error: Could not find a suitable MSDN page.'
-      return None
-
-
   # Read the page
   opener = urllib2.build_opener()
   opener.addheaders = [('User-agent', 'Mozilla/5.0')]
