@@ -142,6 +142,11 @@ def grabMsdnPageFromGoogle(searchTerm, searchType):
 ###############################################################################
 # Launch browser with search term
 ###############################################################################
+
+class QuietChooser(Choose):
+  def enter(self, n):
+    pass
+
 def openMsdnPageInBrowser():
   # Get the highlighted identifier
   searchTerm = idaapi.get_highlighted_identifier()
@@ -156,7 +161,7 @@ def openMsdnPageInBrowser():
 
   # Select "language"
   languages = ['Win32 API', 'C/C++']
-  chooser = Choose([], "Language to query", 1)  # Get a modal Choose instance
+  chooser = QuietChooser([], "Language to query", 1)  # Get a modal Choose instance
   chooser.list = languages                      # List to choose from
   chooser.width = 40                            # Set the width
   ch = chooser.choose()                         # Run the chooser
