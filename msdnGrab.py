@@ -228,7 +228,10 @@ def grabDefinitionFromMsdn(searchType):
 
   # Find the actual library call
   codeReferences = list(CodeRefsFrom(ea, 0))
-  nextEa = codeReferences[0]
+  if (codeReferences == []):
+    nextEa = ea
+  else:
+    nextEa = codeReferences[0]
 
   # Put it as a repeatable comment (don't clobber existing comment)
   print '(msdnGrab) Setting repeatable comment at 0x%s:' % str(hex(nextEa))
