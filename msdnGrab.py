@@ -28,6 +28,7 @@ import bs4
 import HTMLParser
 import urllib
 import urllib2
+import webbrowser
 
 
 ###############################################################################
@@ -36,6 +37,8 @@ import urllib2
 
 _MSDN_HOTKEY_WIN32API   = 'F3'
 _MSDN_HOTKEY_C          = 'Ctrl-F3'
+_MSDN_HOTKEY_BROWSER    = 'Ctrl-Shift-F3'
+
 COMMENT_NOT_REPEATABLE  = 0
 COMMENT_REPEATABLE      = 1
 MAX_COMMENT_WIDTH       = 50
@@ -135,6 +138,50 @@ def grabMsdnPageFromGoogle(searchTerm, searchType):
   # Return the first link
   return msdnUrl
 
+
+###############################################################################
+# Launch browser with search term
+###############################################################################
+def openMsdnPageInBrowser():
+  # Get the highlighted identifier
+  searchTerm = idaapi.get_highlighted_identifier()
+
+  # Get the address
+  ea = ScreenEA()
+
+  # Make sure we have something highlighted
+  if not searchTerm:
+    print "(msdnGrab) Error: No identifier to use as search term was highlighted."
+    return None
+
+  # Select "language"
+  languages = ['Win32 API', 'C/C++']
+  chooser = Choose([], "Language to query", 1)  # Get a modal Choose instance
+  chooser.list = languages                      # List to choose from
+  chooser.width = 40                            # Set the width
+  ch = chooser.choose()                         # Run the chooser
+
+  # Decode the selection
+  if (chooser.list[ch-1] == 'Win32 API'):
+    searchType = _SEARCHTYPE_WIN32API
+  elif (chooser.list[ch-1] == 'C/C++'):
+    searchType = _SEARCHTYPE_C
+  else:
+    print '(msdnGrab) Error: Invalid language type selection made.'
+    return None
+
+  # Handle IDA's naming conventions for the identifier
+  searchTerm = searchTerm.replace('__imp_', '')
+  print '(msdnGrab) Using search term: %s' % searchTerm
+
+  # Get the MSDN page URL
+  msdnUrl = grabMsdnPageFromGoogle(searchTerm, searchType)
+  if (msdnUrl is None):
+    print '(msdnGrab) Error: Could not find a suitable MSDN page.'
+    return None
+
+  # Launch the browser
+  webbrowser.open(msdnUrl)
 
 
 ###############################################################################
@@ -276,14 +323,16 @@ def grabDefinitionFromMsdn(searchType):
 if __name__ == "__main__":
   # Register the hotkeys
   print '(msdnGrab) Press "%s" grab definition from MSDN (for win32 API).' % _MSDN_HOTKEY_WIN32API
-  print '(msdnGrab) Press "%s" grab definition from MSDN (for C/C++)' % _MSDN_HOTKEY_C
+  print '(msdnGrab) Press "%s" grab definition from MSDN (for C/C++).' % _MSDN_HOTKEY_C
+  print '(msdnGrab) Press "%s" to open MSDN page in browser.' % _MSDN_HOTKEY_BROWSER
 
   # Add the hotkeys
   idaapi.CompileLine('static __grabDefinitionFromMsdn_win32api() { RunPythonStatement("grabDefinitionFromMsdn(_SEARCHTYPE_WIN32API)"); }')
   idc.AddHotkey(_MSDN_HOTKEY_WIN32API, '__grabDefinitionFromMsdn_win32api')
+
   idaapi.CompileLine('static __grabDefinitionFromMsdn_c() { RunPythonStatement("grabDefinitionFromMsdn(_SEARCHTYPE_C)"); }')
   idc.AddHotkey(_MSDN_HOTKEY_C, '__grabDefinitionFromMsdn_c')
 
-
-
+  idaapi.CompileLine('static __openMsdnPageInBrowser() { RunPythonStatement("openMsdnPageInBrowser()"); }')
+  idc.AddHotkey(_MSDN_HOTKEY_BROWSER, '__openMsdnPageInBrowser')
 
