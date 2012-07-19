@@ -91,6 +91,7 @@ def multiLineString(text):
   return multiLine.rstrip('\n')
 
 
+
 ###############################################################################
 # Search Google for MSDN page
 ###############################################################################
@@ -238,7 +239,7 @@ def grabDefinitionFromMsdn(searchType):
   page = page.replace('\xc2\xa0', ' ')
   soup = bs4.BeautifulSoup(page)
 
-  # Find the first definition
+  # Find the first (code) definition
   dbgPrint('Searching for code...')
   code = 'No code found.'
   for code in soup.findAll('pre'):
@@ -246,6 +247,7 @@ def grabDefinitionFromMsdn(searchType):
     dbgPrint('Code found: \n%s' % code)
     if (code != ''):
       break
+  code = code.replace('\r', '')
 
   # Find the description
   dbgPrint('Searching for description...')
