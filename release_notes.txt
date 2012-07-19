@@ -7,6 +7,7 @@ msdnGrab 1.2.1
 	. Handles more cases of descriptions to ignore (not the right description)
 	. Handles case where the MSDN page does not have a code listing
 	. Added dbgPrint() functionality for debugging purposes
+	  (Set _MSDN_DEBUG = True to turn it on)
 	. Bugfixes
 
 msdnGrab 1.2

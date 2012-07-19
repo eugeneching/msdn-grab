@@ -20,7 +20,6 @@ ___
   3. Select the language (Win32 API, C/C++).
 
 ### Notes about comments
-
   1. If it's an external library call (i.e. function is an extern in the data segment), a (code) repeating comment is used.
   2. If it's a direct call (i.e. function is in the code segment), a (function) repeating comment is used.
 

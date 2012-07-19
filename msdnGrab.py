@@ -1,5 +1,5 @@
 ###############################################################################
-# MSDN Grab
+# msdnGrab
 #
 # Allows a user to grab documentation from online MSDN for a given function
 # name in IDA, and import the documentation as a repeatable comment for that
@@ -7,12 +7,17 @@
 #
 # The script assumes that the function name is valid, and queries Google for
 # the MSDN page. It then pulls the short description of the function, and
-# the function definition into the comment.
+# the function definition into the comment. It also allows you to open the
+# MSDN page to view the rest of the information.
 #
 # Usage:
 #
-#   Hotkey for MSDN grab: F3
-#   Highlight a function (e.g. CreateFileA) in IDA, and hit F3.
+#   Hotkey to grab as comment (Win32 API):  F3
+#   Hotkey to grab as comment (C/C++):      Ctrl-F3
+#   Hotkey to open query in browser:        Ctrl-Shift-F3
+#
+#   Just highlight a function (e.g. CreateFileA) in IDA, and hit the
+#   corresponding hotkey what you want.
 #
 # Copyright (c) 2012 - * | Eugene Ching <eugene@enegue.com>
 #
@@ -47,6 +52,7 @@ _SEARCHTYPE_WIN32API    = 0
 _SEARCHTYPE_C           = 1
 
 _MSDN_DEBUG             = False
+
 
 ###############################################################################
 # Helper functions
@@ -83,7 +89,6 @@ def multiLineString(text):
       multiLine = multiLine + '\n'
       lengthFromPreviousNewLine = len(multiLine)
   return multiLine.rstrip('\n')
-
 
 
 ###############################################################################
