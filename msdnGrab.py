@@ -46,11 +46,15 @@ MAX_COMMENT_WIDTH       = 50
 _SEARCHTYPE_WIN32API    = 0
 _SEARCHTYPE_C           = 1
 
-
+_MSDN_DEBUG             = False
 
 ###############################################################################
 # Helper functions
 ###############################################################################
+
+def dbgPrint(sMessage):
+  if (_MSDN_DEBUG == True):
+    print sMessage
 
 class TagStripper(HTMLParser.HTMLParser):
   def __init__(self):
@@ -161,7 +165,7 @@ def openMsdnPageInBrowser():
 
   # Select "language"
   languages = ['Win32 API', 'C/C++']
-  chooser = QuietChooser([], "Language to query", 1)  # Get a modal Choose instance
+  chooser = QuietChooser([], "(Open in browser) Language to query", 1)  # Get a modal Choose instance
   chooser.list = languages                      # List to choose from
   chooser.width = 40                            # Set the width
   ch = chooser.choose()                         # Run the chooser
@@ -208,8 +212,6 @@ def grabDefinitionFromMsdn(searchType):
   # Handle IDA's naming conventions for the identifier
   searchTerm = searchTerm.replace('__imp_', '')
   print '(msdnGrab) Using search term: %s' % searchTerm
-  #if (searchTerm.startswith('_')):
-    #searchTerm = searchTerm[1:]
 
   # Get the MSDN page URL
   msdnUrl = grabMsdnPageFromGoogle(searchTerm, searchType)
@@ -232,47 +234,37 @@ def grabDefinitionFromMsdn(searchType):
   soup = bs4.BeautifulSoup(page)
 
   # Find the first definition
-  code = soup.findAll('pre')[0]
-  code = stripBlankLines(stripTags(code))
-  code = code.replace('\r', '')
+  dbgPrint('Searching for code...')
+  code = 'No code found.'
+  for code in soup.findAll('pre'):
+    code = stripBlankLines(stripTags(code))
+    dbgPrint('Code found: \n%s' % code)
+    if (code != ''):
+      break
 
   # Find the description
-  if ('Dev Center' in str(soup.findAll('form'))):
-    '''
-    The new-style MSDN pages are fairly well structured.
-    Hence, it is possible to simply grab the second <p>
-    tag, which so far contains the description.
-
-    '''
-    print '(msdnGrab) New-style MSDN page found.'
-    desc = str(soup.findAll('p')[1])
-
-  else:
-    '''
-    The old-style MSDN pages are a bit quirky, in that their
-    structure and layout is not standardized. The first <p>
-    tag may immediately contain the description, or they may
-    be blank, or they may be abused to contain update info.
-
-    If there are more, they need to be added here to be
-    handled before the wrong <p> tag is grabbed.
-
-    '''
-    print '(msdnGrab) Old-style MSDN page found.'
-    for desc in soup.findAll('p'):
-      desc = stripBlankLines(stripTags(desc))
-      if (desc != '' and 'updated' not in desc.lower()):
-        break
+  dbgPrint('Searching for description...')
+  desc = 'No description found.'
+  for desc in soup.findAll('p'):
+    desc = stripBlankLines(stripTags(desc)).strip()
+    dbgPrint('Description found: \n%s' % desc)
+    if (desc != '' and 
+        'updated' not in desc.lower() and 
+        'applies to' not in desc.lower() and
+        'rated this helpful' not in desc.lower() and
+        not desc.startswith('[') and not desc.endswith(']')
+       ):
+      break
 
   # Pretty format the description
   desc = stripBlankLines(stripTags(desc))
 
   # Find the actual library call
-  codeReferences = list(CodeRefsFrom(ea, 0))
+  codeReferences = list(XrefsFrom(ea, 1))
   if (codeReferences == []):
     nextEa = ea
   else:
-    nextEa = codeReferences[0]
+    nextEa = codeReferences[0].to
 
   # Put it as a repeatable comment (don't clobber existing comment)
   print '(msdnGrab) Setting repeatable comment at 0x%s:' % str(hex(nextEa))

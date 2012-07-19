@@ -1,0 +1,23 @@
+msdnGrab Release Notes
+----------------------
+
+msdnGrab 1.2.1
+	. Improved grabbing of information from MSDN page when there are multiple
+		possible places to grab from
+	. Handles more cases of descriptions to ignore (not the right description)
+	. Handles case where the MSDN page does not have a code listing
+	. Added dbgPrint() functionality for debugging purposes
+	. Bugfixes
+
+msdnGrab 1.2
+	. Added open MSDN page in browser (Ctrl-Shift-F3)
+	. Bugfixes
+
+msdnGrab 1.1
+	. Implemented querying of C/C++ functions, from MSDN as well (Ctrl-F3)
+	. Fixed parsing of newlines between UNIX and Windows formats 
+	  (was affecting comments)
+
+msdnGrab 1.0
+	. Initial implementation
+
