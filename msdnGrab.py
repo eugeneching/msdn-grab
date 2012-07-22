@@ -107,7 +107,7 @@ def grabMsdnPageFromGoogle(searchTerm, searchType):
     We simply query it.
 
     '''
-    googleUrl='http://www.google.com/search?hl=en&q=%s+function+msdn+desktop+apps&sa=N&safe=off&filter=0' % searchTerm
+    googleUrl='https://www.google.com/search?hl=en&q=%s+function+msdn+desktop+apps&sa=N&safe=off&filter=0' % searchTerm
     print '(msdnGrab) [Querying against Win32API] %s' % googleUrl
 
   elif (searchType == _SEARCHTYPE_C):
@@ -120,7 +120,7 @@ def grabMsdnPageFromGoogle(searchTerm, searchType):
     page, and an English one, in that order.
 
     '''
-    googleUrl='http://www.google.com/search?hl=en&q=intitle:%s+msdn+crt+inurl:msdn*en-us&sa=N&safe=off&filter=0' % searchTerm
+    googleUrl='https://www.google.com/search?hl=en&q=intitle:%s+msdn+crt+inurl:msdn*en-us&sa=N&safe=off&filter=0' % searchTerm
     print '(msdnGrab) [Querying against C/C++] %s' % googleUrl
 
   else:
